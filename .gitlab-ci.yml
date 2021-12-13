@@ -143,6 +143,7 @@ specs:
     - bundle exec rake db:seed
     - >
         ruby -i -pe 'gsub(/^(\s+)compile: true$/, "\\1compile: false")' config/webpacker.yml
+    - bundle exec rake assets:precompile
     - bundle exec rake knapsack:rspec
 
 js_build:
