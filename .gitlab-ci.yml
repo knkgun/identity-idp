@@ -202,6 +202,8 @@ smoketest-int:
 coverage:
   extends: .on_push
   stage: after_test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
   script:
     - *bundle_install
     - bundle exec spec/simplecov_merger.rb
