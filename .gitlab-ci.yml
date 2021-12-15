@@ -205,14 +205,15 @@ coverage:
   script:
     - *bundle_install
     - bundle exec spec/simplecov_merger.rb
+    - mv coverage/coverage/* coverage/
   artifacts:
+      reports:
+        cobertura: coverage/coverage.xml
       name: coverage
       expire_in: 31d
       paths:
-        - coverage/coverage/index.html
-        - coverage/coverage/assets/
-      reports:
-        cobertura: coverage/coverage/coverage.xml
+        - coverage/index.html
+        - coverage/assets/
 
 sync_from_github:
   image: mirror.gcr.io/alpine/git:latest
