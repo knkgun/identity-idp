@@ -7,6 +7,27 @@ RSpec.describe Telephony::OtpSender do
     Telephony::Test::Call.clear_calls
   end
 
+  # GSM 03.38 character set
+  GSM_NON_WHITE_SPACE_CHARACTERS = %w[
+    A B C D E F G H I J K L M N O P Q R S T U V W X Y Z a b c d e
+    f g h i j k l m n o p q r s t u v w x y z à Å å Ä ä Ç É é è ì Ñ ñ ò Ø ø Ö ö ù Ü ü Æ æ ß 0 1 2 3
+    4 5 6 7 8 9 & * @ : , ¤ $ = ! > # - ¡ ¿ ( < % . + £ ? " ) § ; ' / _ ¥ Δ Φ Γ Λ Ω Π Ψ Σ Θ Ξ
+  ]
+  GSM_WHITESPACE_CHARACTERS = ["\n", "\r", ' ']
+  GSM_DOUBLE_CHARACTERS = ['^', '{', '}', '\\', '[', ']', '~', '|', '€']
+  GSM_CHARACTERS = GSM_NON_WHITE_SPACE_CHARACTERS + GSM_WHITESPACE_CHARACTERS +
+                   GSM_DOUBLE_CHARACTERS
+
+  def gsm_length(text)
+    text.chars.map do |character|
+      if GSM_DOUBLE_CHARACTERS.include?(character)
+        2
+      else
+        1
+      end
+    end.sum
+  end
+
   context 'with the test adapter' do
     subject do
       described_class.new(
@@ -252,6 +273,104 @@ RSpec.describe Telephony::OtpSender do
 
       it 'is the code' do
         expect(otp_transformed_for_channel).to eq(otp)
+      end
+    end
+  end
+
+  describe '#authentication_message' do
+    let(:sender) do
+      sender = Telephony::OtpSender.new(
+        to: '+18888675309',
+        otp: 'ABC123',
+        channel: 'sms',
+        expiration: TwoFactorAuthenticatable::DIRECT_OTP_VALID_FOR_MINUTES,
+        domain: 'secure.login.gov',
+        country_code: 'US',
+      )
+    end
+
+    context 'sms' do
+      context 'English' do
+        it 'does not contain any non-GSM characters and is less than or equal to 160 characters' do
+          message = sender.send(:authentication_message)
+          expect(gsm_length(message)).to be <= 160
+          expect(message.chars.all? { |x| GSM_CHARACTERS.include?(x) }).to eq true
+        end
+      end
+
+      # The Spanish-language translation currently includes the 'ó', character, which is not
+      # in the GSM 03.38 character set
+      context 'Spanish' do
+        xit 'does not contain any non-GSM characters and is less than or equal to 160 characters' do
+          I18n.locale = :es
+
+          message = sender.send(:authentication_message)
+          expect(gsm_length(message)).to be <= 160
+          expect(message.chars.all? { |x| GSM_CHARACTERS.include?(x) }).to eq true
+        ensure
+          I18n.locale = :en
+        end
+      end
+
+      context 'French' do
+        it 'does not contain any non-GSM characters and is less than or equal to 160 characters' do
+          I18n.locale = :fr
+
+          message = sender.send(:authentication_message)
+          expect(gsm_length(message)).to be <= 160
+          expect(message.chars.all? { |x| GSM_CHARACTERS.include?(x) }).to eq true
+        ensure
+          I18n.locale = :en
+        end
+      end
+    end
+  end
+
+  describe '#confirmation_message' do
+    let(:sender) do
+      sender = Telephony::OtpSender.new(
+        to: '+18888675309',
+        otp: 'ABC123',
+        channel: 'sms',
+        expiration: TwoFactorAuthenticatable::DIRECT_OTP_VALID_FOR_MINUTES,
+        domain: 'secure.login.gov',
+        country_code: 'US',
+      )
+    end
+
+    context 'sms' do
+      context 'English' do
+        it 'does not contain any non-GSM characters and is less than or equal to 160 characters' do
+          message = sender.send(:confirmation_message)
+          expect(gsm_length(message)).to be <= 160
+          expect(message.chars.all? { |x| GSM_CHARACTERS.include?(x) }).to eq true
+        end
+      end
+
+      # The Spanish-language translation currently includes the 'ó', character, which is not
+      # in the GSM 03.38 character set
+      context 'Spanish' do
+        xit 'does not contain any non-GSM characters and is less than or equal to 160 characters' do
+          I18n.locale = :es
+
+          message = sender.send(:confirmation_message)
+          expect(gsm_length(message)).to be <= 160
+          expect(message.chars.all? { |x| GSM_CHARACTERS.include?(x) }).to eq true
+        ensure
+          I18n.locale = :en
+        end
+      end
+
+      context 'French' do
+        it 'does not contain any non-GSM characters and is less than or equal to 160 characters' do
+          I18n.locale = :fr
+
+          message = sender.send(:confirmation_message)
+          expect(gsm_length(message)).to be <= 160
+          expect(message.chars.all? { |x| GSM_CHARACTERS.include?(x) }).to eq true
+        ensure
+          I18n.locale = :en
+        end
       end
     end
   end
