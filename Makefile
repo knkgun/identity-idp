@@ -7,6 +7,7 @@
 CONFIG = config/application.yml
 HOST ?= localhost
 PORT ?= 3000
+ARTIFACT_DESTINATION_FILE ?= 'idp.tar.gz'
 
 all: check
 
@@ -128,3 +129,13 @@ local_gems_bundle:
 
 local_gems_run: local_gems_bundle
 	BUNDLE_GEMFILE=Gemfile-dev make run
+
+build_artifact:
+	tar --exclude 'chef/config/agencies.yml' --exclude 'chef/config/iaa_gtcs.yml' \
+		--exclude 'chef/config/iaa_orders.yml' --exclude 'chef/config/iaa_statuses.yml' \
+		--exclude 'chef/config/integration_statuses.yml' --exclude 'chef/config/integrations.yml' \
+		--exclude 'chef/config/partner_account_statuses.yml' --exclude 'chef/config/partner_accounts.yml' \
+		--exclude  'chef/config/service_providers.yml' --exclude='chef/certs/sp' \
+		--exclude='chef/identity-idp-config' --exclude='chef/tmp' --exclude='chef/node_modules/.cache' \
+		--exclude='chef/geo_data/GeoLite2-City.mmdb' --exclude='chef/pwned_passwords/pwned_passwords.txt' \
+		--exclude='chef/config/application.yml' -cf - $(ARTIFACT_DIRECTORY) | pigz > $(ARTIFACT_DESTINATION_FILE)
