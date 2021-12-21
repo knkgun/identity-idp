@@ -8,6 +8,7 @@ CONFIG = config/application.yml
 HOST ?= localhost
 PORT ?= 3000
 ARTIFACT_DESTINATION_FILE ?= 'idp.tar.gz'
+GZIP_COMMAND ?= gzip
 
 all: check
 
@@ -139,4 +140,4 @@ build_artifact:
 		--exclude  'config/service_providers.yml' --exclude='certs/sp' \
 		--exclude='identity-idp-config' --exclude='tmp' --exclude='node_modules/.cache' \
 		--exclude='geo_data/GeoLite2-City.mmdb' --exclude='pwned_passwords/pwned_passwords.txt' \
-		--exclude='config/application.yml' -cf - $(ARTIFACT_DIRECTORY) | pigz > $(ARTIFACT_DESTINATION_FILE)
+		--exclude='config/application.yml' -cf - $(ARTIFACT_DIRECTORY) | $(GZIP_COMMAND) > $(ARTIFACT_DESTINATION_FILE)
