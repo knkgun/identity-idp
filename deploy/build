@@ -14,10 +14,6 @@ cd "$(dirname "$0")/.."
 
 set -x
 
-env
-
-id
-which bundle
 # default bundle directory to shared directory
 : ${BUNDLE_DIR=/srv/idp/shared/bundle}
 : ${IDP_LOCAL_DEPENDENCIES=false}
