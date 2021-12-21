@@ -133,5 +133,5 @@ group :test do
 end
 
 group :production do
-  gem 'raise-if-root'
+  # gem 'raise-if-root'
 end
