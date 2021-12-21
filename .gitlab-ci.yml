@@ -225,6 +225,7 @@ artifact:
     NODE_ENV: 'production'
     RAILS_ENV: 'production'
   script:
+    - 'echo -e "production:\n  secret_key_base: 451c5d4990cacf95517a28d206970c1a1880d629e32b4d266877c39868bcaeef98bdae6b3f6f68f4f46399f3ac772af34e0ec7392d2de54accf6bde560ffdcbc" > config/application.yml'
     - ./deploy/build
     - ./deploy/build-post-config
     - bundle config set --local cache_all true && bundle package
