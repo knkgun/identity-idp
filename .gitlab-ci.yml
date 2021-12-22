@@ -223,11 +223,14 @@ coverage:
 artifact:
   extends: .on_push
   stage: build
-  artifacts:
-      name: bundle
-      expire_in: 31d
-      paths:
+  cache:
+    policy: push
+    key:
+      files:
         - ./tmp/idp.tar.gz
+    paths:
+      - ./tmp/idp.tar.gz
+    policy: pull
   variables:
     NODE_ENV: 'production'
     RAILS_ENV: 'production'
