@@ -32,6 +32,7 @@ cache:
         - yarn.lock
     paths:
       - .yarn-cache/
+      - node_modules/
     policy: pull
 
   - &yarn_production_cache
@@ -40,6 +41,7 @@ cache:
         - yarn.lock
     paths:
       - .yarn-cache/
+      - node_modules/
     policy: pull
 
   - &assets_cache
