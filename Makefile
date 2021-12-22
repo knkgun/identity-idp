@@ -138,6 +138,7 @@ build_artifact:
 		--exclude 'config/integration_statuses.yml' --exclude 'config/integrations.yml' \
 		--exclude 'config/partner_account_statuses.yml' --exclude 'config/partner_accounts.yml' \
 		--exclude  'config/service_providers.yml' --exclude='certs/sp' \
-		--exclude='identity-idp-config' --exclude='tmp' --exclude='node_modules/.cache' \
+		--exclude='identity-idp-config' --exclude='tmp' --exclude='node_modules/' \
 		--exclude='geo_data/GeoLite2-City.mmdb' --exclude='pwned_passwords/pwned_passwords.txt' \
+		--exclude='vendor/ruby' \
 		--exclude='config/application.yml' -cf - $(ARTIFACT_DIRECTORY) | $(GZIP_COMMAND) > $(ARTIFACT_DESTINATION_FILE)
